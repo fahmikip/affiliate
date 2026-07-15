@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <?!= include('Style'); ?>
+  <script src="https://www.gstatic.com/charts/loader.js"></script>
+</head>
+<body>
+  <div class="ambient one"></div><div class="ambient two"></div>
+  <div class="app-shell">
+    <?!= include('Sidebar'); ?>
+    <main class="main">
+      <header class="topbar glass">
+        <button class="icon-btn mobile-menu" id="menuBtn" aria-label="Buka menu">☰</button>
+        <div class="search-wrap"><span>⌕</span><input id="globalSearch" placeholder="Cari produk, toko, kategori…" autocomplete="off"></div>
+        <div class="top-actions"><button class="icon-btn" id="themeBtn" title="Ganti tema">◐</button><button class="btn primary" data-action="new-product">＋ Tambah Produk</button></div>
+      </header>
+      <div id="pageHost">
+        <?!= include('Dashboard'); ?>
+        <?!= include('Product'); ?>
+        <?!= include('Import'); ?>
+      </div>
+    </main>
+  </div>
+  <div id="modalRoot"></div><div id="toastRoot" class="toast-root"></div>
+  <div id="loader" class="loader-overlay"><div class="spinner"></div><p>Memuat ruang kerja…</p></div>
+  <?!= include('Script'); ?>
+</body>
+</html>
