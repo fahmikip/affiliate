@@ -50,6 +50,8 @@ Product Name,Category,Store,Price,Sales,Commission,Affiliate Link,Extra Commissi
 
 Duplicates are detected using the case-insensitive combination of product name, store, and affiliate link. Imports are limited to 5,000 rows per request.
 
+Shopee Indonesia bulk-link exports are supported directly. The importer automatically detects semicolon delimiters and maps `Nama Produk`, `Nama Toko`, `Harga`, `Penjualan`, `Komisi hingga`, `Link Produk`, and `Link Komisi Ekstra`. Local values such as `90,6RB`, `10RB+`, `10,50%`, and `Rp9.064` are converted automatically.
+
 ## Operational notes
 
 - Prices are stored as numeric IDR values; commissions are numeric percentages.

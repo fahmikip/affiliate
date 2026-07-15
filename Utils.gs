@@ -23,6 +23,20 @@ function ensureDatabase_() {
 
 function cleanText_(value, max) { return String(value == null ? '' : value).replace(/[<>]/g, '').trim().slice(0, max || 1000); }
 function number_(value) { var n = Number(String(value == null ? 0 : value).replace(/[^0-9.-]/g, '')); return isFinite(n) ? n : 0; }
+
+/** Converts Indonesian marketplace numbers such as 90,6RB, 10RB+, Rp9.064 and 10,50%. */
+function localizedNumber_(value, kind) {
+  if (typeof value === 'number') return isFinite(value) ? value : 0;
+  var text = String(value == null ? '' : value).trim().toUpperCase();
+  if (!text) return 0;
+  var multiplier = /(?:RB|RIBU|K)\+?$/.test(text) ? 1000 : /(?:JT|JUTA|M)\+?$/.test(text) ? 1000000 : 1;
+  text = text.replace(/RP\s*/g, '').replace(/(?:RB|RIBU|JT|JUTA|K|M)\+?$/g, '').replace(/%/g, '').trim();
+  if (kind === 'money' && multiplier === 1) text = text.replace(/\./g, '').replace(',', '.');
+  else if (text.indexOf(',') >= 0) text = text.replace(/\./g, '').replace(',', '.');
+  else if (kind !== 'decimal' && /^\d{1,3}(?:\.\d{3})+$/.test(text)) text = text.replace(/\./g, '');
+  var n = Number(text.replace(/[^0-9.-]/g, ''));
+  return isFinite(n) ? n * multiplier : 0;
+}
 function bool_(value) { return value === true || /^(true|yes|1)$/i.test(String(value)); }
 function dateIso_(value) { var d = value instanceof Date ? value : new Date(value); return isNaN(d.getTime()) ? new Date().toISOString() : d.toISOString(); }
 function newId_() { return 'PRD-' + Utilities.getUuid().split('-')[0].toUpperCase(); }
@@ -31,8 +45,8 @@ function clearCache_() { CacheService.getScriptCache().remove(CONFIG.CACHE_KEY);
 function normalizeProduct_(p) {
   return {
     id: cleanText_(p.id, 64), name: cleanText_(p.name, 250), category: cleanText_(p.category || 'Uncategorized', 100),
-    store: cleanText_(p.store, 150), price: Math.max(0, number_(p.price)), sales: Math.max(0, number_(p.sales)),
-    commission: Math.max(0, number_(p.commission)), affiliateLink: cleanText_(p.affiliateLink, 2000),
+    store: cleanText_(p.store, 150), price: Math.max(0, localizedNumber_(p.price, 'money')), sales: Math.max(0, localizedNumber_(p.sales, 'count')),
+    commission: Math.max(0, localizedNumber_(p.commission, 'decimal')), affiliateLink: cleanText_(p.affiliateLink, 2000),
     extraLink: cleanText_(p.extraLink, 2000), status: cleanText_(p.status || 'Active', 30),
     createdAt: dateIso_(p.createdAt), favorite: bool_(p.favorite), imageUrl: cleanText_(p.imageUrl, 2000)
   };

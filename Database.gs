@@ -51,10 +51,11 @@ function importCsvRows_(rows) {
     var sheet=ensureDatabase_(), existing=getProducts_(), keys={};
     existing.forEach(function(p){keys[(p.name+'|'+p.store+'|'+p.affiliateLink).toLowerCase()]=true;});
     var added=[], duplicates=0, errors=[];
-    rows.forEach(function(raw,i){ try { var p=normalizeProduct_({id:'',name:raw['Product Name']||raw.name,category:raw.Category||raw.category,
-      store:raw.Store||raw.store,price:raw.Price||raw.price,sales:raw.Sales||raw.sales,commission:raw.Commission||raw.commission,
-      affiliateLink:raw['Affiliate Link']||raw.affiliateLink,extraLink:raw['Extra Commission Link']||raw.extraLink,
-      status:raw.Status||raw.status,createdAt:raw['Created At']||raw.createdAt,imageUrl:raw['Image URL']||raw.imageUrl}); validateProduct_(p);
+    rows.forEach(function(raw,i){ try { var p=normalizeProduct_({id:'',name:raw['Product Name']||raw['Nama Produk']||raw.name,category:raw.Category||raw.Kategori||raw.category,
+      store:raw.Store||raw['Nama Toko']||raw.Toko||raw.store,price:raw.Price||raw.Harga||raw.price,sales:raw.Sales||raw.Penjualan||raw.sales,
+      commission:raw['Komisi hingga']||raw['Komisi Hingga']||raw.Commission||raw.commission,
+      affiliateLink:raw['Affiliate Link']||raw['Link Produk']||raw.affiliateLink,extraLink:raw['Extra Commission Link']||raw['Link Komisi Ekstra']||raw.extraLink,
+      status:raw.Status||raw.status,createdAt:raw['Created At']||raw['Dibuat Pada']||raw.createdAt,imageUrl:raw['Image URL']||raw['URL Gambar']||raw.imageUrl}); validateProduct_(p);
       var key=(p.name+'|'+p.store+'|'+p.affiliateLink).toLowerCase(); if(keys[key]) {duplicates++;return;} keys[key]=true;p.id=newId_();added.push(p);
     } catch(e){errors.push('Baris '+(i+2)+': '+e.message);} });
     if(added.length) sheet.getRange(sheet.getLastRow()+1,1,added.length,CONFIG.HEADERS.length).setValues(added.map(toRow_));
